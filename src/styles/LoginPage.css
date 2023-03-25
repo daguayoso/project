@@ -48,6 +48,14 @@ input
   color: white;
   border-radius: 60px;
 }
+.error
+{
+  color: brown;
+}
+.register_link
+{
+  color: white;
+}
 .field_container
 {
   margin-bottom: 15px;
