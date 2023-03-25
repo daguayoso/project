@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate , Link,Routes,Route,Router} from 'react-router-dom';
 import FuelQuoteHistory from './FuelQuoteHistory';
 import Navbar from './Navbar';
+import axios from 'axios';
 function FuelQuoteForm() {
  
   const [address, setAddress] = useState('12345 Destination rd Houston TX 76543');
   const [gallons, setGallons] = useState('');
   const [deliveryDate, setDeliveryDate] = useState('');
-  const [price, setPrice] = useState('2.88');
+  const [price, setPrice] = useState('');
   const [totalAmountDue, setTotalAmountDue] = useState('');
   
   const history = useNavigate();
@@ -22,17 +23,23 @@ function FuelQuoteForm() {
     setTotalAmountDue(amount.toFixed(2));
   };
 
-  const saveFormData = () => {
+  const saveFormData = async () => {
     const amount = gallons * price;
-    const formData = { address, gallons, deliveryDate, price, totalAmountDue: amount.toFixed(2), pricePerGallon: price };
-    const fuelQuoteHistory = JSON.parse(localStorage.getItem('fuelQuoteHistory') || '[]');
-    fuelQuoteHistory.push(formData);
-    localStorage.setItem('fuelQuoteHistory', JSON.stringify(fuelQuoteHistory));
+    const formData = { 
+        "gallons": gallons,
+        "deliveryDate": deliveryDate,
+        "address": address, 
+        "price": price, 
+        "totalAmountDue": totalAmountDue
+    };
+
+    const response = await axios.post( `http://localhost:4000/quotes/addQuotes`, formData); 
+    console.log(response);
+    
   };
 
   // form submission
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     calculateTotalAmountDue();
     saveFormData();
   };
@@ -48,19 +55,19 @@ function FuelQuoteForm() {
         </div>
         <div>
           <label>Delivery Address:</label>
-          <input type="text" value={address} readOnly />
+          <input type="text" value={address} required onChange={(event) => setAddress(event.target.value)}/>
         </div>
         <div>
           <label>Delivery Date:</label>
-          <input type="date" value={deliveryDate} onChange={(event) => setDeliveryDate(event.target.value)} />
+          <input type="date" required onChange={(event) => setDeliveryDate(event.target.value)} />
         </div>
         <div>
           <label>Suggested Price / Gallon:</label>
-          <input type="number" value={price} readOnly />
+          <input type="number" value={price} onChange={(event) => setPrice(event.target.value)}  />
         </div>
         <div>
           <label>Total Amount Due:</label>
-          <input type="number" value={totalAmountDue} readOnly />
+          <input type="number" value={totalAmountDue} onChange={(event) => setTotalAmountDue(event.target.value)} />
         </div>
         <button type="submit">Calculate Total Amount Due</button>
       </form>
@@ -81,4 +88,6 @@ function FuelQuoteForm() {
 
 
 export default FuelQuoteForm;
+
+
 
