@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
+import {useEffect} from 'react'
 import Navbar from './Navbar'
+import axios from 'axios';
+import '../styles/Profile.css'
 
 
 function Profile() {
@@ -14,13 +17,44 @@ function Profile() {
       setState(event.target.value)
     }
 
-   
- 
- 
+    const handleSubmit = async() => {
+
+      const response = await axios.post('http://localhost:4000/login/register',
+      {
+        "fullName": name,
+        "address1": Address1,
+        "address2": Address2,
+        "city": city,
+        "state": state,
+        "zipcode": zipCode
+      }
+      );
+    }
+
+
+    const [pricing, setPricing] = useState('')
+
+
+  
+    
+
+    useEffect(() => {
+      getPricing();
+  }, []);
+
+   const getPricing = async() => {
+      const response = await axios.get('http://localhost:4000/pricing/getPricing');
+       setPricing(response.data);
+    }
+
   return (
     <div className = "App">
       <Navbar/>
-        <h1>Profile Information</h1>
+      <div className = "header">
+      <div>Welcome David, from Texas!</div>
+     <div className = "pricing" >Suggested Price: $ {pricing}</div>
+     </div>
+        <h1>Manage Profile Information</h1>
         <label>Name: </label>
         <input
             type ='text'
@@ -127,10 +161,9 @@ function Profile() {
     <option value="WV">West Virginia</option>
     <option value="WI">Wisconsin</option>
     <option value="WY">Wyoming</option>
+      </select>  
 
-
-
-      </select>
+     <div><button onClick = {handleSubmit}>Submit</button></div>
     </div>
   )
 }
