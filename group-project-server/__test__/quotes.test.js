@@ -1,7 +1,7 @@
 const request = require("supertest");
 const express = require('express');
 const app = require("../index");
-// test for missing or incorrect parameters in the addQuotes
+// test for missing or incorrect parameters in the addQuote
 describe("POST /addQuotes", () => {
     it("should return an error message if gallons is missing", async () => {
       const res = await request(app)
