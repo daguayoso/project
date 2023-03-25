@@ -17,6 +17,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" exact component={LoginPage} />
+          <Route path="/login" exact component={LoginPage} />
           <Route path="/profile" exact component={Profile} />
           <Route path="/history" exact component={FuelQuoteHistory} />
           <Route path="/form" exact component={FuelQuoteForm} />
