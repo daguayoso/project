@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import '../styles/LoginPage.css'; 
 import backgroundImage from '../img/road.jpg';
 import './Profile.js';
+import axios from 'axios';
 import Navbar from "./Navbar";
 function LoginPage(){
 
@@ -26,47 +27,29 @@ function LoginPage(){
     }
 
     const handleLogin = async () => {
-        try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            });
-            const data = await response.json();
-            if (data.success) {
-                setIsLoggedIn(true);
-                navigate('/profile');
-            } else {
-                setError(data.error);
-            }
-        } catch (error) {
-            setError(error.message);
+        const response = await axios.get( `http://localhost:4000/login/signin`); 
+        
+        //for now our login allows anyone to register, but we will implement authentication as time goes on
+        if (response.data == "True"){
+            navigate('/profile')
         }
+      
     };
+
     
       
     const handleRegistration = async () => {
-    try {
-        const response = await fetch("/api/register", {
-            method: "POST",
-            body: JSON.stringify({ username, password }),
-            headers: { "Content-Type": "application/json" },
-        });
-        if (response.ok) {
-            setIsRegistered(true);
-            //setIsLoggedIn(true);
-            navigate("/login");
-        } else {
-            const errorMessage = await response.text();
-            setRegistrationError(errorMessage);
+        console.log(username)
+        console.log(password)
+        
+        const response = await axios.post('http://localhost:4000/login/register',
+        {
+            "username": username,
+            "password": password
         }
-    } catch (error) {
-        console.error(error);
-        console.log("handleRegistration clicked");
-        setRegistrationError("Registration failed. Please try again later.");
-    }
+        )
+
+        console.log(response)
     };
     
     // if (isLoggedIn) {
@@ -80,41 +63,41 @@ function LoginPage(){
             <div className='container'>
                 <div> 
                     {
-                    !isRegistered?
+                    display?
                     <div>
-                        <h1 className='title'>Sign Up</h1>
-                        <div>
-                            <div className='field_container'>
-                                <input placeholder='Username' className='otherField' onChange={(e)=>setUsername(e.target.value)}/>
-                            </div>
-                            <div className='field_container'>
-                            <input placeholder='Password' type={show?"text":"password"} className='otherField' onChange={(e)=>setPassword(e.target.value)}/>
-                            {/* <label onClick={handleShow}>{show?"Hide":"Show"}</label> */}
-                            </div>
-                            <button className='login' onClick={handleRegistration}>Register</button>
-                            {registrationError && <div className="error">Registration Error</div>}
-                        </div>
-                        <div className='register_link'>
-                            Already registered? <button className="login" onClick={()=>setDisplay(false)}>Login</button>
-                        </div>
-                    </div>:
+                    <h1 className='title'>Sign Up</h1>
                     <div>
-                        <h1 className='title'>Login</h1>
-                        <div>
-                            <div className='field_container'>
-                                <input placeholder='Username' className='otherField' onChange={(e)=>setUsername(e.target.value)}/>
-                            </div>
-                            <div className='field_container'>
-                            <input placeholder='Password' type={show?"text":"password"} className='otherField' onChange={(e)=>setPassword(e.target.value)}/>
-                            {/* <label onClick={handleShow}>{show?"Hide":"Show"}</label> */}
-                            </div>
-                            <button className='login' onClick={handleLogin}>Login</button>
-                            {error && <div className="error">Error</div>}
+                        <div className='field_container'>
+                            <input placeholder='Username' className='otherField' onChange={(e)=>setUsername(e.target.value)}/>
                         </div>
-                        <div className='register_link'>
-                            Don't have an account? <button classname='register' onClick={()=>setDisplay(true)}>Register</button>
+                        <div className='field_container'>
+                        <input placeholder='Password' type={show?"text":"password"} className='otherField' onChange={(e)=>setPassword(e.target.value)}/>
+                        {/* <label onClick={handleShow}>{show?"Hide":"Show"}</label> */}
                         </div>
+                        <button className='login' onClick={handleRegistration}>Register</button>
+                        {registrationError && <div className="error">Registration Error</div>}
                     </div>
+                    <div className='login_link'>
+                        Already registered? <button className='goToLogin' onClick={()=>setDisplay(false)}>Login</button>
+                    </div>
+                </div>:
+                <div>
+                    <h1 className='title'>Login</h1>
+                    <div>
+                        <div className='field_container'>
+                            <input placeholder='Username' className='otherField' onChange={(e)=>setUsername(e.target.value)}/>
+                        </div>
+                        <div className='field_container'>
+                        <input placeholder='Password' type={show?"text":"password"} className='otherField' onChange={(e)=>setPassword(e.target.value)}/>
+                        {/* <label onClick={handleShow}>{show?"Hide":"Show"}</label> */}
+                        </div>
+                        <button className='login' onClick={handleLogin}>Login</button>
+                        {error && <div className="error">Wrong username or password</div>}
+                    </div>
+                    <div className='register_link'>
+                        Don't have an account? <button classname='register' onClick={()=>setDisplay(true)}>Register</button>
+                    </div>
+                </div>
                     }
                 </div>
             </div>
