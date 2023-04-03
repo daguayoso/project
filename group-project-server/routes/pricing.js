@@ -13,25 +13,13 @@ router.use(cors());
 //enforces field validation in the backend
 const pricingSchema = new mongoose.Schema({
  gallons: {type: Number, required: true, minimum: .50}
-  
 });
 
 
 const Pricing = mongoose.model("Pricing", pricingSchema);
-
-
  // for now we will send a placer value
-router.get("/getPricing", async (req, res) => {
-     res.send("3.44");
-
+router.get("/", async (req, res) => {
+     res.sendStatus(200);
 });
-
-
-
-
-
-
-
-
 
 module.exports = router;
