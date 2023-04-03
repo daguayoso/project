@@ -12,18 +12,16 @@ router.use(express.json());
 //middleware needed to access information between different domains
 router.use(cors());
 
-
-
 //this helps enforce field validation when we are trying to add a new user 
 const userSchema = new mongoose.Schema({
     username: {type: String, required: true, minLength: 8, maxLength: 20},
-    password: {type: String, required: true, minLength: 8, maxLength: 20},
+    password: {type: String, required: true},
   });
-  
+
   const User = mongoose.model("User", userSchema);
-  
-  
-  router.post("/register", async (req, res) => {
+
+
+router.post("/register", async (req, res) => {
       try {
         const username = req.body.username;
         const password = req.body.password;
@@ -33,13 +31,27 @@ const userSchema = new mongoose.Schema({
         await user.save();
         res.json({ success: true });
       } catch (error) {
-        res.json({ success: false, error : error.message });
+        res.status();
       }
     });
-    
-router.get("/signin", async (req, res) => {
-      // for now we will let anyone log in, we will implement login authentication when we have a database
-       res.send("True");
+
+
+//this is where user authentication occurs when signing in
+router.get("/signin/:username/:password", async (req, res) => {
+       try{
+        const username = req.params.username;
+        const password = req.params.password;
+        var saltRounds = 10;
+        const userFound = await User.findOne({username: username});
+        await bcrypt.compare(password, userFound.password);
+        if (userFound){
+          res.json(userFound);
+        }else{
+          res.status({message: "Invalid credentials"});
+        }
+       }catch(error){
+        res.status("user authentication not working!!");
+       }
     });
 
 
