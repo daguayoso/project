@@ -20,14 +20,11 @@ const quoteSchema = new mongoose.Schema({
     price: {type: Number, required: true, minimimum: 0.50},
     totalAmountDue: {type: Number, required: true, minimum: 0.50},
   });
-  
+
   const Quote = mongoose.model("Quote", quoteSchema);
 
 //lets us add quotes
   router.post("/addQuotes", async(req, res)=>{
-    if (req.body.gallons*req.bodyprice != req.body.totalAmountDue){
-        res.json("Incorrect data detected")
-    }
     try {
         const gallons = req.body.gallons;
         const deliveryDate = req.body.deliveryDate;
@@ -41,16 +38,16 @@ const quoteSchema = new mongoose.Schema({
       } catch (error) {
         res.json({ success: false, error: error.message });
       }
-    
+
   });
 
 
-
-   //gets our quote history
+    //gets our quote history
    // return a hardcoded Value array of quoteHistory
     router.get("/quoteHistory", async (req, res) => {
-    res.send([{address: "12345 Destination rd Houston TX 76543", gallons: "3", deliveryDate: "2023-02-24", price: "2.88", totalAmountDue: "8.64"},
-   {address: "12345 Destination rd Houston TX 76543", gallons: "5", deliveryDate: "2023-02-24", price: "2.88", totalAmountDue: "14.40"}]);
+      Quote.find()
+    .then(quotes => res.json (quotes))
+    .catch(err => res.status(400).json('Error' + err));
   });
 
 module.exports = router
