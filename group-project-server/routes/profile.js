@@ -9,10 +9,9 @@ const cors = require('cors')
 router.use(express.json());
 //middleware needed to access information between different domains
 router.use(cors());
-
-
 //enforces field validation in the backend
 const profileSchema = new mongoose.Schema({
+    username: {type: String, required: true, minLength: 8, maxLength: 20},
     fullName: {type: String, required: true, maxLength: 50},
     address1: {type: String, required: true, maxLength: 100},
     address2: {type: String, required: false, maxLength: 100},
@@ -24,24 +23,39 @@ const profileSchema = new mongoose.Schema({
   const Profile = mongoose.model("Profile", profileSchema);
 
 
+   // returns all user profiles
+    router.get("/", async (req, res) => {
+      Profile.find()
+     .then(profileInfo => res.json (profileInfo))
+    .catch(err => res.status(400).json('Error' + err));
+});
+
+
+  // return a profile by username
+  router.get("/:username", async (req, res) => {
+      Profile.findOne({username: req.params.username})
+     .then(profileInfo => res.json (profileInfo))
+    .catch(err => res.status(400).json('Error' + err));
+});
+
+
+  //adds a profile to the username
   router.post("/addProfile", async(req, res)=>{
     try {
+        const username = req.body.username;
         const fullName = req.body.fullName;
         const address1 = req.body.address1;
         const address2 = req.body.address2;
         const city = req.body.city;
         const state = req.body.state;
+        const zipcode = req.body.zipcode;
 
-        const profile = new Profile({fullName: fullName, address1: address1, address2: address2, city: city, state: state});
+        const profile = new Profile({username: username, fullName: fullName, address1: address1, address2: address2, city: city, state: state, zipcode: zipcode});
         await profile.save();
         res.json({ success: true });
       } catch (error) {
         res.json({ success: false, error: error.message });
       }
   })
-  
-  
-
-
-
+    
 module.exports = router;
