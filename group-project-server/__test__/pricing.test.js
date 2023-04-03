@@ -1,7 +1,10 @@
-const request = require("supertest");
+const request = require ('supertest');
 
-const app = require("express");
+const app = require('../routes/pricing');
 
-describe("Pricing tests", () => {
-    it('')
+describe ("GET Pricing", () =>{
+    test("should respond with a 200 status code", async()=>{
+        const response = await request(app).get("/")
+        expect(response.statusCode).toBe(200)
+    })
 })
