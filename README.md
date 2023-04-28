@@ -1,1 +1,1 @@
-# Our backend is located in group-project-server
+# This is our project.
